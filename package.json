@@ -1,0 +1,20 @@
+{
+  "name": "chancellor-principal-executive-portfolio",
+  "version": "2.0.0",
+  "description": "The Ultimate Collegiate Principal & Academic Luminary Executive Portfolio Platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "principal-portfolio",
+    "collegiate-leadership",
+    "academic-luminary",
+    "higher-education",
+    "provost-executive",
+    "institutional-governance"
+  ],
+  "author": "Antigravity Academic Architecture",
+  "license": "MIT"
+}
