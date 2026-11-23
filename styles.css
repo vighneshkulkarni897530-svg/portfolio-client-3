@@ -50,12 +50,14 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -64,6 +66,20 @@ body {
   font-family: var(--font-sans);
   line-height: 1.68;
   overflow-x: hidden;
+  width: 100%;
+}
+
+button, a, .btn-explore-work, .btn-view-pubs, .btn-get-touch, .btn-pubs-gold, .btn-secondary-outline {
+  touch-action: manipulation;
+}
+
+button:active,
+.btn-explore-work:active,
+.btn-view-pubs:active,
+.btn-get-touch:active,
+.btn-pubs-gold:active,
+.btn-secondary-outline:active {
+  transform: scale(0.97);
 }
 
 a {
@@ -253,17 +269,71 @@ button {
 .mobile-toggle-btn {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
-  width: 28px;
-  padding: 4px 0;
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: var(--transition);
+}
+
+.mobile-toggle-btn:hover {
+  background: rgba(184, 134, 11, 0.08);
+  border-color: var(--gold-border);
 }
 
 .mobile-toggle-btn span {
   display: block;
-  width: 100%;
+  width: 22px;
   height: 2.2px;
   background: var(--navy-primary);
   border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, background 0.3s ease;
+}
+
+.mobile-toggle-btn.open span:nth-child(1) {
+  transform: translateY(7.2px) rotate(45deg);
+  background: var(--gold-primary);
+}
+
+.mobile-toggle-btn.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.mobile-toggle-btn.open span:nth-child(3) {
+  transform: translateY(-7.2px) rotate(-45deg);
+  background: var(--gold-primary);
+}
+
+/* Backdrop & Mobile Drawer Utilities */
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 30, 60, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+
+.mobile-menu-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.menu-locked {
+  overflow: hidden;
+}
+
+.mobile-nav-cta {
+  display: none;
 }
 
 /* ==========================================================================
@@ -1919,50 +1989,27 @@ button {
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN (MEDIA QUERIES)
+   RESPONSIVE DESIGN (MEDIA QUERIES) — EXECUTIVE MOBILE HARMONY
    ========================================================================= */
-@media (max-width: 1100px) {
-  .hero-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
+
+@keyframes slideDrawer {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
-  .hero-visual-side {
-    order: -1;
-  }
-  .hero-cursive-accent {
-    right: 0;
-  }
-  .about-dossier-card {
-    grid-template-columns: 1fr;
-    padding: 32px 24px;
-    gap: 32px;
-  }
-  .dossier-visual-portal {
-    max-width: 460px;
-    margin: 0 auto;
-  }
-  .dossier-frame-wrapper {
-    height: 420px;
-  }
-  .dossier-pillars-ribbon {
-    grid-template-columns: 1fr;
-  }
-  .milestones-triad-layout {
-    grid-template-columns: 1fr;
-  }
-  .governance-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .footer-columns-grid {
-    grid-template-columns: repeat(2, 1fr);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+/* --- 1. TABLETS & SMALL LAPTOPS (<= 1140px) --- */
 @media (max-width: 1140px) {
   .hero-section::before {
     background-position: center top;
     opacity: 0.30;
   }
+
   .hero-campus-watermark {
     background: linear-gradient(
       180deg,
@@ -1971,12 +2018,16 @@ button {
       rgba(251, 249, 245, 0.2) 100%
     );
   }
+
+  /* Nav Menu Drawer */
   .nav-menu {
     display: none;
   }
+
   .mobile-toggle-btn {
     display: flex;
   }
+
   .nav-menu.mobile-open {
     display: flex;
     flex-direction: column;
@@ -1984,59 +2035,522 @@ button {
     top: 100%;
     left: 0;
     right: 0;
-    background: #FFFFFF;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 2px solid var(--gold-border);
-    padding: 20px 24px;
-    gap: 12px;
-    box-shadow: 0 15px 30px rgba(12, 30, 60, 0.12);
+    box-shadow: 0 25px 50px rgba(12, 30, 60, 0.16);
+    padding: 16px 20px 24px;
+    gap: 4px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideDrawer 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    z-index: 1000;
   }
+
+  .nav-menu.mobile-open .nav-link {
+    font-size: 0.94rem;
+    font-weight: 600;
+    padding: 11px 14px;
+    min-height: 48px;
+    border-radius: 8px;
+    border-bottom: 1px solid rgba(184, 134, 11, 0.08);
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    transition: var(--transition);
+  }
+
+  .nav-menu.mobile-open .nav-link:hover,
+  .nav-menu.mobile-open .nav-link.active {
+    background: rgba(184, 134, 11, 0.08);
+    color: var(--gold-primary);
+    font-weight: 700;
+    padding-left: 18px;
+  }
+
+  .nav-menu.mobile-open .nav-link.active::after {
+    display: none;
+  }
+
+  .mobile-nav-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gold-border);
+  }
+
+  .mobile-drawer-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 0.92rem;
+    border-radius: 30px;
+    box-shadow: var(--shadow-gold);
+  }
+
+  .mobile-nav-inst {
+    font-family: var(--font-cinzel);
+    font-size: 0.68rem;
+    color: var(--text-gold);
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  /* Hero */
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  .hero-visual-side {
+    order: -1;
+  }
+
+  .portrait-master-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .hero-cursive-accent {
+    right: 0;
+    top: 8%;
+  }
+
+  /* Profile Dossier */
+  .about-dossier-card {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+    gap: 32px;
+  }
+
+  .dossier-visual-portal {
+    max-width: 460px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .dossier-frame-wrapper {
+    height: 420px;
+  }
+
+  /* Layouts */
   .vm-cards-row {
     grid-template-columns: 1fr;
   }
+
   .academics-pillars-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .governance-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .milestones-triad-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
   .publications-cards-grid {
     grid-template-columns: 1fr;
   }
+
+  .footer-columns-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@media (max-width: 600px) {
+/* --- 2. TABLETS & LARGE SMARTPHONES (<= 768px) --- */
+@media (max-width: 768px) {
+  /* Prevent Header Crowding */
+  .nav-cta-wrap .btn-get-touch {
+    display: none;
+  }
+
+  .site-header .nav-container {
+    padding: 10px 18px;
+    gap: 12px;
+  }
+
+  .brand-crest {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .brand-title {
+    font-size: 0.54rem;
+    letter-spacing: 1.2px;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 44px 0 60px 0;
+    min-height: auto;
+  }
+
+  .hero-headline {
+    font-size: clamp(2rem, 5.8vw, 2.5rem);
+    line-height: 1.2;
+  }
+
+  .hero-subtags {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .hero-quote-card {
+    padding: 14px 16px;
+    max-width: 100%;
+  }
+
+  .hero-btn-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-btn-row .btn-explore-work,
+  .hero-btn-row .btn-view-pubs {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 13px 20px;
+    font-size: 0.92rem;
+  }
+
+  .hero-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .stat-pill {
+    padding: 8px 10px 8px 8px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .stat-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stat-icon-wrap svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .stat-number {
+    font-size: 1.35rem;
+  }
+
+  .stat-number-text {
+    font-size: 1.1rem;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+    line-height: 1.2;
+  }
+
+  .hero-cursive-accent {
+    display: none;
+  }
+
+  .portrait-master-card {
+    max-width: 360px;
+  }
+
   .portrait-image-wrapper {
-    height: 380px;
+    height: 400px;
   }
+
+  .portrait-nameplate {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    padding: 12px 16px;
+  }
+
+  /* Profile Dossier */
+  .about-section {
+    padding: 60px 0;
+  }
+
   .about-dossier-card {
-    padding: 22px 14px;
-    border-radius: 18px;
+    padding: 26px 18px;
+    border-radius: 20px;
+    gap: 26px;
   }
+
   .dossier-frame-wrapper {
-    height: 350px;
+    height: 360px;
   }
+
+  .dossier-main-heading {
+    font-size: 1.85rem;
+  }
+
+  .dossier-title-lead {
+    font-size: 0.88rem;
+  }
+
   .dossier-spec-matrix {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .spec-card-meta .spec-value {
+    white-space: normal;
+    font-size: 0.78rem;
+    line-height: 1.3;
+  }
+
+  .dossier-pillars-ribbon {
     grid-template-columns: 1fr;
   }
-  .dossier-main-heading {
-    font-size: 1.6rem;
-  }
-  .hero-stats-row {
-    gap: 18px;
-  }
-  .milestones-cards-col {
+
+  .dossier-actions-row {
     flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
+
+  .dossier-actions-row .btn-explore-work,
+  .dossier-actions-row .btn-secondary-outline {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  /* Sections Spacing & Titles */
+  .vision-mission-section,
+  .governance-section,
+  .achievements-section,
+  .milestones-section,
+  .academics-section,
+  .research-section,
+  .publications-section {
+    padding: 60px 0;
+  }
+
+  .section-title-wrap {
+    margin-bottom: 36px;
+  }
+
+  .section-title-main {
+    font-size: clamp(1.75rem, 5vw, 2.2rem);
+  }
+
+  /* Academics & Governance */
   .academics-pillars-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
+
   .governance-cards-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
+
+  /* Achievements */
+  .achievements-flex-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    align-items: center;
+  }
+
   .award-laurel-item {
-    min-width: 45%;
+    min-width: 0;
   }
+
+  .master-trophy-display {
+    grid-column: 1 / -1;
+    justify-content: center;
+    padding: 12px 0 0;
+  }
+
+  /* Milestones */
+  .milestones-heading {
+    font-size: 1.85rem;
+  }
+
+  .milestones-cards-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .milestones-intro-col .btn-pubs-gold {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  /* Publications & Desk Parchment */
+  .desk-parchment-sheet {
+    padding: 28px 20px;
+    border-radius: 14px;
+  }
+
+  .parchment-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .parchment-body {
+    font-size: 0.98rem;
+    line-height: 1.75;
+  }
+
+  .lead-quote-highlight,
+  .principal-quote-highlight {
+    padding: 12px 16px;
+    font-size: 1.05rem;
+  }
+
+  .parchment-signature-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .official-office-seal {
+    width: 76px;
+    height: 76px;
+    align-self: flex-start;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding: 55px 0 25px 0;
+  }
+
   .footer-columns-grid {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
+
+  .contact-list li {
+    min-height: 44px;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+}
+
+/* --- 3. STANDARD MOBILE PHONES (<= 540px) --- */
+@media (max-width: 540px) {
+  .section-container {
+    padding: 0 16px;
+  }
+
+  .hero-headline {
+    font-size: 1.9rem;
+  }
+
+  .hero-stats-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-pill {
+    padding: 10px 14px;
+    border-radius: 14px;
+  }
+
+  .portrait-master-card {
+    max-width: 320px;
+  }
+
+  .portrait-image-wrapper {
+    height: 350px;
+  }
+
+  .about-dossier-card {
+    padding: 22px 14px;
+    border-radius: 16px;
+  }
+
+  .dossier-frame-wrapper {
+    height: 300px;
+  }
+
+  .dossier-spec-matrix {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
   .desk-parchment-sheet {
-    padding: 24px 20px;
+    padding: 22px 16px;
+  }
+
+  .script-signature {
+    font-size: 2.6rem;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .input-newsletter {
+    padding: 8px 4px;
+  }
+
+  .btn-newsletter-submit {
+    width: 100%;
+    border-radius: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-dialog {
+    padding: 20px 16px;
+    margin: 10px;
+  }
+}
+
+/* --- 4. ULTRA-COMPACT PHONES (<= 380px) --- */
+@media (max-width: 380px) {
+  .brand-name {
+    font-size: 0.95rem;
+  }
+
+  .brand-title {
+    font-size: 0.48rem;
+    letter-spacing: 0.8px;
+  }
+
+  .hero-headline {
+    font-size: 1.68rem;
+  }
+
+  .dossier-main-heading {
+    font-size: 1.55rem;
+  }
+
+  .achievements-flex-row {
+    grid-template-columns: 1fr;
   }
 }

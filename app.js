@@ -42,16 +42,44 @@
       });
     });
 
-    // Mobile Menu Toggle
+    // Mobile Menu Toggle & Luxurious Drawer Support
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+    function closeMobileMenu() {
+      if (navMenu) navMenu.classList.remove('mobile-open');
+      if (mobileBtn) mobileBtn.classList.remove('open');
+      if (mobileBackdrop) mobileBackdrop.classList.remove('active');
+      document.body.classList.remove('menu-locked');
+    }
+
+    function toggleMobileMenu() {
+      if (!navMenu) return;
+      const isOpen = navMenu.classList.toggle('mobile-open');
+      if (mobileBtn) mobileBtn.classList.toggle('open', isOpen);
+      if (mobileBackdrop) mobileBackdrop.classList.toggle('active', isOpen);
+      document.body.classList.toggle('menu-locked', isOpen);
+    }
+
     if (mobileBtn && navMenu) {
-      mobileBtn.addEventListener('click', () => {
-        navMenu.classList.toggle('mobile-open');
-      });
+      mobileBtn.addEventListener('click', toggleMobileMenu);
+
+      if (mobileBackdrop) {
+        mobileBackdrop.addEventListener('click', closeMobileMenu);
+      }
 
       navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-          navMenu.classList.remove('mobile-open');
-        });
+        link.addEventListener('click', closeMobileMenu);
+      });
+
+      const drawerBtn = navMenu.querySelector('.mobile-drawer-btn');
+      if (drawerBtn) {
+        drawerBtn.addEventListener('click', closeMobileMenu);
+      }
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 1140) {
+          closeMobileMenu();
+        }
       });
     }
   }
