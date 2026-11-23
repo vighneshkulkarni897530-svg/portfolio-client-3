@@ -606,25 +606,6 @@ body.menu-locked {
   box-shadow: 0 20px 45px rgba(12, 30, 60, 0.09);
 }
 
-.scopus-badge-tag {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #FFFFFF;
-  border: 1px solid var(--gold-border);
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: var(--text-primary);
-  box-shadow: 0 4px 12px rgba(12, 30, 60, 0.06);
-}
-
 .portrait-image-wrapper {
   position: relative;
   border-radius: 14px;
